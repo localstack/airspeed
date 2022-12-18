@@ -1139,18 +1139,18 @@ class MacroDefinition(_FunctionDefinition):
     START = re.compile(r"#macro\b(.*)", re.S + re.I)
     NAME = re.compile(r"\s*([a-z][a-z_0-9]*)\b(.*)", re.S + re.I)
     RESERVED_NAMES = (
-        "if",
-        "else",
-        "elseif",
-        "set",
-        "macro",
-        "foreach",
-        "parse",
-        "include",
-        "stop",
-        "end",
-        "define",
-    )
+        'if',
+        'else',
+        'elseif',
+        'set',
+        'macro',
+        'foreach',
+        'parse',
+        'include',
+        'stop',
+        'end',
+        'define',
+        'return')
 
     def evaluate_raw(self, stream, namespace, loader):
         global_ns = namespace.top()
