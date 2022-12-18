@@ -1310,6 +1310,12 @@ line")"""
         output = template.merge({"test_dict": {"k": "initial value"}})
         self.assertEqual(output, "initial value - new value")
 
+    def test_dict_putall_items(self):
+        template = airspeed.Template("#set( $ignore = $test_dict.putAll({'k1': 'v3', 'k2': 'v2'}))"
+                                     "$test_dict.k1 - $test_dict.k2")
+        output = template.merge({'test_dict': {'k1': 'v1'}})
+        self.assertEqual(output, "v3 - v2")
+
     def test_evaluate(self):
         template = airspeed.Template(
             """#set($source1 = "abc")
