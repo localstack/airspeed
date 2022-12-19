@@ -1333,44 +1333,6 @@ line")"""
         output = template.merge({})
         self.assertEqual(output, '{"foo": "bar"}')
 
-    def test_quiet_return_function(self):
-        # render .put(..) without quiet function
-        template = """
-        #set($v1 = {})
-        $v1.put('foo', 'bar1')
-        $v1.put('foo', 'bar2')
-        #return($v1)
-        """
-        output = airspeed.Template(template).merge({})
-        output = re.sub(r"\s+", " ", output).strip()
-        self.assertEqual('bar1 {"foo": "bar2"}', output)
-        # render .put(..) with quiet function
-        # template = """
-        # #set($v1 = {})
-        # $v1.put('foo', 'bar1')
-        # $util.qr($v1.put('foo', 'bar2'))
-        # #return($v1)
-        # """
-        # output = template.merge({})
-        # output = re.sub(r"\s+", " ", output).strip()
-        # self.assertEqual('bar1 {"foo": "bar2"}', output)
-
-
-    def test_quiet_return_put(self):
-        template = """
-        #set($v1 = {})
-        $util.qr($v1.put('value', 'hi2'))
-        #return($v1)
-        """
-        output = airspeed.Template(template).merge({})
-        self.assertEqual({"value": "hi2"}, output)
-
-        template = """
-        #set($v1 = {})
-        $util.qr($v1.put('value', 'hi2'))
-        """
-        output = airspeed.Template(template).merge({})
-        self.assertEqual("", output)
 
 # TODO:
 #
