@@ -367,6 +367,10 @@ class TemplateTestCase(TestCase):
         template = airspeed.Template('#set ($name = "\\\\batman\\nand robin")$name')
         self.assertEqual("\\batman\nand robin", template.merge({}))
 
+    def test_string_literal_with_inner_double_quotes(self):
+        template = airspeed.Template('#set($d = \'{"a": 2}\')$d')
+        self.assertEqual('{"a": 2}', template.merge({}))
+
     def test_string_interpolation_with_inner_double_double_quotes(self):
         template = airspeed.Template('#set($d = "{""a"": 2}")$d')
         self.assertEqual('{"a": 2}', template.merge({}))
