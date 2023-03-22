@@ -473,7 +473,7 @@ class StringLiteral(_Element):
                 "t": "\t",
                 '"': '"',
                 "\\": "\\",
-                "'": "'",
+                "'": "'"
             }.get(match.group(1), "\\" + match.group(1))
 
         self.value = self.ESCAPED_CHAR.sub(unescape, value)
@@ -488,6 +488,10 @@ class InterpolatedStringLiteral(StringLiteral):
 
     def parse(self):
         StringLiteral.parse(self)
+
+        # replace consecutive double quotes with double quotes
+        self.value = self.value.replace('""', '"')
+
         self.block = Block(self.filename, self.value, 0)
 
     def calculate(self, namespace, loader):
