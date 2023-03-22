@@ -483,7 +483,7 @@ class StringLiteral(_Element):
 
 
 class InterpolatedStringLiteral(StringLiteral):
-    STRING = re.compile(r'"{1,2}((?:\\["nrbt\\\\\\$]|[^"\\])*)"{1,2}(.*)', re.S)
+    STRING = re.compile(r'"((?:\\"|[^"])*(?:""[^"]*)*)"(.*)', re.S)
     ESCAPED_CHAR = re.compile(r'\\([nrbt"\\])')
 
     def parse(self):
