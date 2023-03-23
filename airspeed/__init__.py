@@ -357,7 +357,7 @@ class _Element:
     def require_next_element(self, element_spec, expected):
         if callable(element_spec):
             try:
-               element = element_spec(self.filename, self._full_text, self.end)
+                element = element_spec(self.filename, self._full_text, self.end)
             except NoMatch:
                 raise self.syntax_error(expected)
             else:
