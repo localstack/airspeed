@@ -375,6 +375,10 @@ class TemplateTestCase(TestCase):
         template = airspeed.Template('#set($d = "{""a"": 2}")$d')
         self.assertEqual('{"a": 2}', template.merge({}))
 
+    def test_string_interpolation_with_multiple_double_quotes(self):
+        template = airspeed.Template(r'#set($d = "1\"2""3\"4""")$d')
+        self.assertEqual('1"2"3"4"', template.merge({}))
+
     def test_else_block_evaluated_when_if_expression_false(self):
         template = airspeed.Template("#if ($value) true #else false #end")
         self.assertEqual(" false ", template.merge({}))
