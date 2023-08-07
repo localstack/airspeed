@@ -278,84 +278,108 @@ class TestTemplating:
             context={"name": "Steve", "show_greeting": True, "is_birthday": True},
         )
 
-    @pytest.mark.xfail(reason="TODO - VTL CLI fails to parse list values as context argument")
+    @pytest.mark.xfail(
+        reason="TODO - VTL CLI fails to parse list values as context argument"
+    )
     def test_foreach_with_plain_content_loops_correctly(self, test_render):
         test_render(
             "#foreach ($name in $names)Hello you. #end",
             context={"names": ["Chris", "Steve"]},
         )
 
-    @pytest.mark.xfail(reason="TODO - VTL CLI fails to parse list values as context argument")
+    @pytest.mark.xfail(
+        reason="TODO - VTL CLI fails to parse list values as context argument"
+    )
     def test_foreach_skipped_when_nested_in_a_failing_if(self, test_render):
         test_render(
             "#if ($false_value)#foreach ($name in $names)Hello you. #end#end",
             context={"false_value": False, "names": ["Chris", "Steve"]},
         )
 
-    @pytest.mark.xfail(reason="TODO - VTL CLI fails to parse list values as context argument")
+    @pytest.mark.xfail(
+        reason="TODO - VTL CLI fails to parse list values as context argument"
+    )
     def test_foreach_with_expression_content_loops_correctly(self, test_render):
         test_render(
             "#foreach ($name in $names)Hello $you. #end",
             context={"you": "You", "names": ["Chris", "Steve"]},
         )
 
-    @pytest.mark.xfail(reason="TODO - VTL CLI fails to parse list values as context argument")
+    @pytest.mark.xfail(
+        reason="TODO - VTL CLI fails to parse list values as context argument"
+    )
     def test_foreach_makes_loop_variable_accessible(self, test_render):
         test_render(
             "#foreach ($name in $names)Hello $name. #end",
             context={"you": "You", "names": ["Chris", "Steve"]},
         )
 
-    @pytest.mark.xfail(reason="TODO - VTL CLI fails to parse list values as context argument")
+    @pytest.mark.xfail(
+        reason="TODO - VTL CLI fails to parse list values as context argument"
+    )
     def test_loop_variable_not_accessible_after_loop(self, test_render):
         test_render(
             "#foreach ($name in $names)Hello $name. #end$name",
             context={"you": "You", "names": ["Chris", "Steve"]},
         )
 
-    @pytest.mark.xfail(reason="TODO - VTL CLI fails to parse list values as context argument")
+    @pytest.mark.xfail(
+        reason="TODO - VTL CLI fails to parse list values as context argument"
+    )
     def test_loop_variables_do_not_clash_in_nested_loops(self, test_render):
         test_render(
             "#foreach ($word in $greetings)$word to#foreach ($word in $names) $word#end. #end",
             context={"greetings": ["Hello", "Goodbye"], "names": ["Chris", "Steve"]},
         )
 
-    @pytest.mark.xfail(reason="TODO - VTL CLI fails to parse list values as context argument")
+    @pytest.mark.xfail(
+        reason="TODO - VTL CLI fails to parse list values as context argument"
+    )
     def test_loop_counter_variable_available_in_loops(self, test_render):
         test_render(
             "#foreach ($word in $greetings)$velocityCount,#end",
             context={"greetings": ["Hello", "Goodbye"]},
         )
 
-    @pytest.mark.xfail(reason="TODO - VTL CLI fails to parse list values as context argument")
+    @pytest.mark.xfail(
+        reason="TODO - VTL CLI fails to parse list values as context argument"
+    )
     def test_loop_counter_variable_available_in_loops_new(self, test_render):
         test_render(
             "#foreach ($word in $greetings)$foreach.count,#end",
             context={"greetings": ["Hello", "Goodbye"]},
         )
 
-    @pytest.mark.xfail(reason="TODO - VTL CLI fails to parse list values as context argument")
+    @pytest.mark.xfail(
+        reason="TODO - VTL CLI fails to parse list values as context argument"
+    )
     def test_loop_index_variable_available_in_loops_new(self, test_render):
         test_render(
             "#foreach ($word in $greetings)$foreach.index,#end",
             context={"greetings": ["Hello", "Goodbye"]},
         )
 
-    @pytest.mark.xfail(reason="TODO - VTL CLI fails to parse list values as context argument")
+    @pytest.mark.xfail(
+        reason="TODO - VTL CLI fails to parse list values as context argument"
+    )
     def test_loop_counter_variables_do_not_clash_in_nested_loops(self, test_render):
         test_render(
             "#foreach ($word in $greetings)Outer $velocityCount#foreach ($word in $names), inner $velocityCount#end. #end",
             context={"greetings": ["Hello", "Goodbye"], "names": ["Chris", "Steve"]},
         )
 
-    @pytest.mark.xfail(reason="TODO - VTL CLI fails to parse list values as context argument")
+    @pytest.mark.xfail(
+        reason="TODO - VTL CLI fails to parse list values as context argument"
+    )
     def test_loop_counter_variables_do_not_clash_in_nested_loops_new(self, test_render):
         test_render(
             "#foreach ($word in $greetings)Outer $foreach.count#foreach ($word in $names), inner $foreach.count#end. #end",
             context={"greetings": ["Hello", "Goodbye"], "names": ["Chris", "Steve"]},
         )
 
-    @pytest.mark.xfail(reason="TODO - VTL CLI fails to parse list values as context argument")
+    @pytest.mark.xfail(
+        reason="TODO - VTL CLI fails to parse list values as context argument"
+    )
     def test_loop_index_variables_do_not_clash_in_nested_loops_new(self, test_render):
         test_render(
             "#foreach ($word in $greetings)Outer $foreach.index#foreach ($word in $names), inner $foreach.index#end. #end",
@@ -484,7 +508,10 @@ class TestTemplating:
     # \\\$email''', template.merge({}))
 
     def test_true_elseif_evaluated_when_if_is_false(self, test_render):
-        test_render("#if ($value1) one #elseif ($value2) two #end", context={"value1": False, "value2": True})
+        test_render(
+            "#if ($value1) one #elseif ($value2) two #end",
+            context={"value1": False, "value2": True},
+        )
 
     # TODO: introduce test_render(..) fixture below!
 
@@ -1405,7 +1432,9 @@ class TestInternals:
         test_render_locally("$squared(8)", context=locals(), expected="64")
         some_var = 6
         test_render_locally("$squared($some_var)", context=locals(), expected="36")
-        test_render_locally("$squared($squared($some_var))", context=locals(), expected="1296")
+        test_render_locally(
+            "$squared($squared($some_var))", context=locals(), expected="1296"
+        )
 
     def test_can_call_function_with_two_parameters(self, test_render_locally):
         def multiply(number1, number2):
@@ -1414,7 +1443,9 @@ class TestInternals:
         test_render_locally("$multiply(2, 4)", context=locals(), expected="8")
         test_render_locally("$multiply( 2 , 4 )", context=locals(), expected="8")
         value1, value2 = 4, 12
-        test_render_locally("$multiply($value1,$value2)", context=locals(), expected="48")
+        test_render_locally(
+            "$multiply($value1,$value2)", context=locals(), expected="48"
+        )
 
     def test_extract_array_index_from_function_result(self, test_render_locally):
         def get_array():
