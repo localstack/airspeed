@@ -28,8 +28,6 @@ setup(
         "flake8",
         "flake8-black",
         "flake8-isort",
-        "localstack",
-        "localstack[runtime]",  # TODO remove once imports are better organized in localstack
         "pytest==6.2.4",
         "pytest-httpserver",
     ]},
