@@ -27,11 +27,13 @@ jobs:
         with:
           python-version: '${{ matrix.python_version }}'
 
-      - name: Build and test
+      - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y libsasl2-dev
           make install
 
+      - name: Run tests
+        run: |
           make lint
           make test

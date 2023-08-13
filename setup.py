@@ -1,17 +1,11 @@
 #!/usr/bin/env python
-# encoding: utf-8
-
-import sys
 
 from setuptools import find_packages, setup
-
-if sys.version_info <= (2, 6):
-    raise SystemExit("Python 2.6 or later is required.")
 
 
 setup(
     name="airspeed-ext",
-    version="0.5.19",
+    version="0.6.0",
     description=(
         "Airspeed is a powerful and easy-to-use templating engine"
         " for Python that aims for a high level of compatibility "
