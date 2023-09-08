@@ -185,6 +185,16 @@ class TestTemplating:
     ):
         test_render("<html></html>")
 
+    #
+    def test_xml(self):
+        template = airspeed.Template(
+            """
+            #set ($a = '<Response><RequestId>30f9e6bc</RequestId></Response>') $a.Response.RequestId
+            """)
+        result = template.merge({})
+        assert result.strip() == "30f9e6bc"
+
+
     def test_parser_substitutes_string_added_to_the_context(self, test_render):
         test_render("Hello $name", context={"name": "Chris"})
 

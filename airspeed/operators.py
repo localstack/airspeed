@@ -6,7 +6,8 @@ import re
 import string
 import sys
 from typing import Any
-
+from lxml import etree
+import xmltodict
 import six
 
 LOG = logging.getLogger(__name__)
@@ -20,6 +21,13 @@ LOG = logging.getLogger(__name__)
 # For example, given a template variable "$foo = [1,2,3]", "$foo.size()" will
 # result in calling method __additional_methods__[list]['size']($foo)
 
+def is_valid_xml(xml_string):
+    try:
+        # Attempt to parse the XML string
+        etree.fromstring(xml_string)
+        return True
+    except etree.XMLSyntaxError:
+        return False
 
 def dict_put(self, key, value):
     existing = self.get(key)
@@ -691,6 +699,8 @@ class VariableExpression(_Element):
     def calculate(self, namespace, loader, global_namespace=None):
         if global_namespace is None:
             global_namespace = namespace
+        if isinstance(namespace, str) and is_valid_xml(namespace):
+            namespace = xmltodict.parse(namespace)
         value = self.part.calculate(namespace, loader, global_namespace)
         if self.subexpression:
             value = self.subexpression.calculate(value, loader, global_namespace)
