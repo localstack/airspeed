@@ -27,8 +27,8 @@ def dict_put(self, key, value):
     return existing
 
 
-def dict_to_string(self):
-    return "{" + ", ".join([f"{k}={v}" for k, v in self.items()]) + "}"
+def dict_to_string(obj: dict) -> str:
+    return "{" + ", ".join([f"{k}={v}" for k, v in obj.items()]) + "}"
 
 
 __additional_methods__ = {
