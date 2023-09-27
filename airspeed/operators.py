@@ -1357,7 +1357,6 @@ class Block(_Element):
                             DefineDefinition,
                             StopDirective,
                             UserDefinedDirective,
-                            ReturnDirective,
                             EvaluateDirective,
                             ReturnDirective,
                             MacroCall,
