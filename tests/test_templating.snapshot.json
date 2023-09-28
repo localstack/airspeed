@@ -1033,5 +1033,12 @@
       "render-result-1-cli": " yes!",
       "render-result-1": " yes!"
     }
+  },
+  "tests/test_templating.py::TestTemplating::test_array_notation_dict_index_with_string_literal": {
+    "recorded-date": "28-09-2023, 20:46:17",
+    "recorded-content": {
+      "render-result-1-cli": "$a.b.c['foo:bar']",
+      "render-result-1": "baz"
+    }
   }
 }

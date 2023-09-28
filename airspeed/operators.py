@@ -699,7 +699,7 @@ class VariableExpression(_Element):
         value = self.part.calculate(namespace, loader, global_namespace)
         if self.subexpression:
             value = self.subexpression.calculate(value, loader, global_namespace)
-        return "" if value is None else value
+        return value
 
 
 class ParameterList(_Element):
@@ -1357,8 +1357,8 @@ class Block(_Element):
                             DefineDefinition,
                             StopDirective,
                             UserDefinedDirective,
-                            EvaluateDirective,
                             ReturnDirective,
+                            EvaluateDirective,
                             MacroCall,
                             FallthroughHashText,
                         )
