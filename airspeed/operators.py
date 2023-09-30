@@ -11,6 +11,7 @@ import six
 
 LOG = logging.getLogger(__name__)
 
+
 # A dict that maps classes to dicts of additional methods.
 # This allows support for methods that are available in Java-based Velocity
 # implementations, e.g., .size() of a list or .length() of a string.
@@ -590,7 +591,7 @@ class Value(_Element):
 
 
 class NameOrCall(_Element):
-    NAME = re.compile(r"([a-zA-Z0-9_]+)(.*)$", re.S)
+    NAME = re.compile(r"([a-zA-Z0-9_-]+)(.*)$", re.S)
     parameters = None
     index = None
 
@@ -689,10 +690,8 @@ class VariableExpression(_Element):
 
     def parse(self):
         self.part = self.next_element(NameOrCall)
-        try:
+        with contextlib.suppress(NoMatch):
             self.subexpression = self.next_element(SubExpression)
-        except NoMatch:
-            pass
 
     def calculate(self, namespace, loader, global_namespace=None):
         if global_namespace is None:
@@ -732,6 +731,7 @@ class ArrayIndex(_Element):
             (
                 FormalReference,
                 IntegerLiteral,
+                StringLiteral,
                 InterpolatedStringLiteral,
                 ParenthesizedExpression,
             ),
@@ -1047,7 +1047,7 @@ class IfDirective(_Element):
 # yet
 class Assignment(_Element):
     START = re.compile(
-        r"\s*\(\s*\$([a-z_][a-z0-9_]*(?:\.[a-z_][a-z0-9_]*)*)\s*=\s*(.*)$", re.S + re.I
+        r"\s*\(\s*\$(\w*(?:\.[\w-]+|\[\"\$\w+\"\]*)*)\s*=\s*(.*)$", re.S + re.I
     )
     END = re.compile(r"\s*\)(?:[ \t]*\r?\n)?(.*)$", re.S + re.M)
 
