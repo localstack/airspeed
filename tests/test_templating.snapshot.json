@@ -1040,5 +1040,26 @@
       "render-result-1-cli": "$a.b.c['foo:bar']",
       "render-result-1": "baz"
     }
+  },
+  "tests/test_templating.py::TestTemplating::test_array_is_empty": {
+    "recorded-date": "14-11-2023, 13:05:28",
+    "recorded-content": {
+      "render-result-1-cli": " false",
+      "render-result-1": " false"
+    }
+  },
+  "tests/test_templating.py::TestTemplating::test_string_index_of": {
+    "recorded-date": "14-11-2023, 13:10:39",
+    "recorded-content": {
+      "render-result-1-cli": " 3",
+      "render-result-1": " 3"
+    }
+  },
+  "tests/test_templating.py::TestTemplating::test_string_substring": {
+    "recorded-date": "14-11-2023, 15:43:22",
+    "recorded-content": {
+      "render-result-1-cli": " eth",
+      "render-result-1": " eth"
+    }
   }
 }

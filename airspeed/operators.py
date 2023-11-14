@@ -38,12 +38,15 @@ __additional_methods__ = {
         "replaceAll": lambda self, pattern, repl: re.sub(pattern, repl, self),
         "startsWith": lambda self, prefix: self.startswith(prefix),
         "contains": lambda self, value: value in self,
+        "indexOf": lambda self, ch: self.index(ch),
+        "substring": lambda self, start, end=None: self[start:end],
     },
     list: {
         "size": lambda self: len(self),
         "get": lambda self, index: self[index],
         "contains": lambda self, value: value in self,
         "add": lambda self, value: self.append(value),
+        "isEmpty": lambda self: len(self) == 0,
     },
     dict: {
         "put": dict_put,

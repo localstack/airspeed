@@ -774,6 +774,9 @@ class TestTemplating:
         )
         test_render(template)
 
+    def test_array_is_empty(self, test_render):
+        test_render("#set($foo = [1, 2, 3]) $foo.isEmpty()")
+
     def test_string_length(self, test_render):
         test_render("#set($foo = 'foobar123') $foo.length()")
 
@@ -791,6 +794,12 @@ class TestTemplating:
 
     def test_string_contains_false(self, test_render):
         test_render("#set($foo = 'nofoobar123') #if($foo.contains('foo'))yes!#end")
+
+    def test_string_index_of(self, test_render):
+        test_render("#set($foo = 'something') $foo.indexOf('e')")
+
+    def test_string_substring(self, test_render):
+        test_render("#set($foo = 'something') $foo.substring(3, 6)")
 
     def test_dict_put_item(self, test_render):
         template = (
