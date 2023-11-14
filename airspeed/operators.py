@@ -39,6 +39,7 @@ __additional_methods__ = {
         "startsWith": lambda self, prefix: self.startswith(prefix),
         "contains": lambda self, value: value in self,
         "indexOf": lambda self, ch: self.index(ch),
+        "substring": lambda self, start, end=None: self[start:end],
     },
     list: {
         "size": lambda self: len(self),
@@ -111,17 +112,13 @@ class TemplateExecutionError(TemplateError):
             element.end,
             element.filename,
         )
-        self.msg = (
-            "Error in template '%s' at position "
-            "%d-%d in expression: %s\n%s: %s"
-            % (
-                self.filename,
-                self.start,
-                self.end,
-                element.my_text(),
-                cause.__name__,
-                value,
-            )
+        self.msg = "Error in template '%s' at position " "%d-%d in expression: %s\n%s: %s" % (
+            self.filename,
+            self.start,
+            self.end,
+            element.my_text(),
+            cause.__name__,
+            value,
         )
 
     def __str__(self):
@@ -375,8 +372,7 @@ class _Element:
 
 class Text(_Element):
     PLAIN = re.compile(
-        r"((?:[^\\\$#]+|\\[\$#])+|\$[^!\{a-z0-9_]|\$$|#$"
-        r"|#[^\{\}a-zA-Z0-9#\*]+|\\.)(.*)$",
+        r"((?:[^\\\$#]+|\\[\$#])+|\$[^!\{a-z0-9_]|\$$|#$" r"|#[^\{\}a-zA-Z0-9#\*]+|\\.)(.*)$",
         re.S + re.I,
     )
     ESCAPED_CHAR = re.compile(r"\\([\$#]\S+)")
@@ -631,11 +627,7 @@ class NameOrCall(_Element):
         if result is None:
             return None  # TODO: an explicit 'not found' exception?
         if isinstance(result, _FunctionDefinition):
-            params = (
-                self.parameters
-                and self.parameters.calculate(top_namespace, loader)
-                or []
-            )
+            params = self.parameters and self.parameters.calculate(top_namespace, loader) or []
             stream = StoppableStream()
             result.execute_function(stream, top_namespace, params, loader)
             result_value = stream.getvalue()
@@ -648,12 +640,8 @@ class NameOrCall(_Element):
         elif self.index is not None:
             array_index = self.index.calculate(top_namespace, loader)
             # If list make sure index is an integer
-            if isinstance(result, list) and not isinstance(
-                array_index, six.integer_types
-            ):
-                raise ValueError(
-                    "expected integer for array index, got '%s'" % (array_index)
-                )
+            if isinstance(result, list) and not isinstance(array_index, six.integer_types):
+                raise ValueError("expected integer for array index, got '%s'" % (array_index))
             try:
                 result = result[array_index]
             except Exception:
@@ -811,8 +799,7 @@ class Comment(_Element, Null):
 
 class BinaryOperator(_Element):
     BINARY_OP = re.compile(
-        r"\s*(>=|<=|<|==|!=|>|%|\|\||&&|or|and|\+|\-|\*|\/|\%|gt|lt|ne|eq|ge"
-        r"|le|not)\s*(.*)$",
+        r"\s*(>=|<=|<|==|!=|>|%|\|\||&&|or|and|\+|\-|\*|\/|\%|gt|lt|ne|eq|ge" r"|le|not)\s*(.*)$",
         re.S,
     )
     OPERATORS = {
@@ -1048,9 +1035,7 @@ class IfDirective(_Element):
 # set($one.two().three = something)
 # yet
 class Assignment(_Element):
-    START = re.compile(
-        r"\s*\(\s*\$(\w*(?:\.[\w-]+|\[\"\$\w+\"\]*)*)\s*=\s*(.*)$", re.S + re.I
-    )
+    START = re.compile(r"\s*\(\s*\$(\w*(?:\.[\w-]+|\[\"\$\w+\"\]*)*)\s*=\s*(.*)$", re.S + re.I)
     END = re.compile(r"\s*\)(?:[ \t]*\r?\n)?(.*)$", re.S + re.M)
 
     def parse(self):
@@ -1304,8 +1289,7 @@ class ForeachDirective(_Element):
                 iter(iterable)
             except TypeError:
                 raise ValueError(
-                    "value for $%s is not iterable in #foreach: %s"
-                    % (self.loop_var_name, iterable)
+                    "value for $%s is not iterable in #foreach: %s" % (self.loop_var_name, iterable)
                 )
             length = len(iterable)
             for item in iterable:

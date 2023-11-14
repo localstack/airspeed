@@ -1054,5 +1054,12 @@
       "render-result-1-cli": " 3",
       "render-result-1": " 3"
     }
+  },
+  "tests/test_templating.py::TestTemplating::test_string_substring": {
+    "recorded-date": "14-11-2023, 15:43:22",
+    "recorded-content": {
+      "render-result-1-cli": " eth",
+      "render-result-1": " eth"
+    }
   }
 }
