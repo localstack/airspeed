@@ -8,6 +8,7 @@ This is a fork of the original [`airspeed`](https://github.com/purcell/airspeed)
 ⚠️ Note: This fork of `airspeed` focuses on providing maximum parity with AWS' implementation of Velocity templates (used in, e.g., API Gateway or AppSync). In some cases, the behavior may diverge from the VTL spec, or from the Velocity [reference implementation](https://velocity.apache.org/download.cgi).
 
 ## Change Log:
+* v0.6.4: add support for string.indexOf, string.substring and array.isEmpty
 * v0.6.3: array notation for dicts using string literals and merge upstream patches
 * v0.6.2: add support to contains and toString functions
 * v0.6.1: improve handling of multi-line dict expressions
