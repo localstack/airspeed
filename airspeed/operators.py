@@ -44,6 +44,7 @@ __additional_methods__ = {
         "get": lambda self, index: self[index],
         "contains": lambda self, value: value in self,
         "add": lambda self, value: self.append(value),
+        "isEmpty": lambda self: len(self) == 0,
     },
     dict: {
         "put": dict_put,

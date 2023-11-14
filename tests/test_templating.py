@@ -774,6 +774,9 @@ class TestTemplating:
         )
         test_render(template)
 
+    def test_array_is_empty(self, test_render):
+        test_render("#set($foo = [1, 2, 3]) $foo.isEmpty()")
+
     def test_string_length(self, test_render):
         test_render("#set($foo = 'foobar123') $foo.length()")
 
