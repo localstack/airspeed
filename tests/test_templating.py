@@ -795,6 +795,9 @@ class TestTemplating:
     def test_string_contains_false(self, test_render):
         test_render("#set($foo = 'nofoobar123') #if($foo.contains('foo'))yes!#end")
 
+    def test_string_index_of(self, test_render):
+        test_render("#set($foo = 'something') $foo.indexOf('e')")
+
     def test_dict_put_item(self, test_render):
         template = (
             "#set( $ignore = $test_dict.put('k', 'new value') )"

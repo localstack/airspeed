@@ -38,6 +38,7 @@ __additional_methods__ = {
         "replaceAll": lambda self, pattern, repl: re.sub(pattern, repl, self),
         "startsWith": lambda self, prefix: self.startswith(prefix),
         "contains": lambda self, value: value in self,
+        "indexOf": lambda self, ch: self.index(ch),
     },
     list: {
         "size": lambda self: len(self),

@@ -1047,5 +1047,12 @@
       "render-result-1-cli": " false",
       "render-result-1": " false"
     }
+  },
+  "tests/test_templating.py::TestTemplating::test_string_index_of": {
+    "recorded-date": "14-11-2023, 13:10:39",
+    "recorded-content": {
+      "render-result-1-cli": " 3",
+      "render-result-1": " 3"
+    }
   }
 }
