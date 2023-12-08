@@ -808,6 +808,19 @@ class TestTemplating:
         )
         test_render(template, {"test_dict": {"k": "initial value"}})
 
+    def test_put_null_in_map(self, test_render):
+        template = r"""
+            #set( $myMap = {} )
+            #set($ignore = $myMap.put('k', null))
+            #if("$myMap.k" == "")
+                "does-not-have-value"
+            #else
+                "has-value"
+            #end
+        """
+        test_render(template, ignore_whitespaces=True)
+
+
     def test_dict_putall_items(self, test_render):
         template = (
             "#set( $ignore = $test_dict.putAll({'k1': 'v3', 'k2': 'v2'}))"

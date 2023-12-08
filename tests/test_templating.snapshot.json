@@ -1061,5 +1061,12 @@
       "render-result-1-cli": " eth",
       "render-result-1": " eth"
     }
+  },
+  "tests/test_templating.py::TestTemplating::test_put_null_in_map": {
+    "recorded-date": "08-12-2023, 17:07:36",
+    "recorded-content": {
+      "render-result-1-cli": "\n                \"has-value\"\n        ",
+      "render-result-1": "\"does-not-have-value\""
+    }
   }
 }

@@ -410,6 +410,17 @@ class FallthroughHashText(_Element):
         stream.write(self.text)
 
 
+class NullLiteral(_Element):
+    NULL = re.compile(r"(?:null)(.*)", re.S)
+
+    def parse(self):
+        self.identity_match(self.NULL)
+        self.value = None
+
+    def calculate(self, namespace, loader):
+        return self.value
+
+
 class IntegerLiteral(_Element):
     INTEGER = re.compile(r"(-?\d+)(.*)", re.S)
 
@@ -576,6 +587,7 @@ class Value(_Element):
     def parse(self):
         self.expression = self.next_element(
             (
+                NullLiteral,
                 FormalReference,
                 FloatingPointLiteral,
                 IntegerLiteral,
