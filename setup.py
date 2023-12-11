@@ -28,7 +28,7 @@ setup(
         "flake8",
         "flake8-black",
         "flake8-isort",
-        "pytest==6.2.4",
+        "pytest",
         "pytest-httpserver",
     ]},
     test_suite="tests",
