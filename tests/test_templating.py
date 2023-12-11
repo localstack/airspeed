@@ -820,7 +820,6 @@ class TestTemplating:
         """
         test_render(template, ignore_whitespaces=True)
 
-
     def test_dict_putall_items(self, test_render):
         template = (
             "#set( $ignore = $test_dict.putAll({'k1': 'v3', 'k2': 'v2'}))"
