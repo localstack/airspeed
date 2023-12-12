@@ -8,10 +8,9 @@ usage:             ## Show this help
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
 install:           ## Install dependencies in local virtualenv folder
-	(test `which virtualenv` || $(PIP_CMD) install --user virtualenv) && \
-		(test -e $(VENV_DIR) || virtualenv $(VENV_OPTS) $(VENV_DIR)) && \
-		($(VENV_RUN) && $(PIP_CMD) install --upgrade pip) && \
-		($(VENV_RUN); $(PIP_CMD) install .[dev])
+	(test -e $(VENV_DIR) || python -m venv $(VENV_OPTS) $(VENV_DIR)) && \
+	($(VENV_RUN) && $(PIP_CMD) install --upgrade pip) && \
+	($(VENV_RUN); $(PIP_CMD) install .[dev])
 
 publish:           ## Publish the library to the central PyPi repository
 	# build and upload archive

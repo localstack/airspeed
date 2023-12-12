@@ -5,7 +5,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="airspeed-ext",
-    version="0.6.4",
+    version="0.6.5",
     description=(
         "Airspeed is a powerful and easy-to-use templating engine "
         "for Python that aims for a high level of compatibility "
@@ -28,7 +28,7 @@ setup(
         "flake8",
         "flake8-black",
         "flake8-isort",
-        "pytest==6.2.4",
+        "pytest",
         "pytest-httpserver",
     ]},
     test_suite="tests",
