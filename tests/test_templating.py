@@ -845,6 +845,40 @@ class TestTemplating:
         template = "#set( $myObject = {'k1': 'v1', 'k2': 'v2'} )$myObject.toString()"
         test_render(template)
 
+    def test_string_matches_true(self, test_render):
+        template = "#set( $myString = '123456789' )$myString.matches( '[0-9]*' )"
+        test_render(template)
+
+    def test_string_matches_false(self, test_render):
+        template = "#set( $myString = 'd123' )$myString.matches( '[0-9]*' )"
+        test_render(template)
+
+    def test_string_matches_full_date(self, test_render):
+        template = (
+            "#set( $myString = '2020-01-20T08:00:00.000Z' )"
+            "$myString.matches('^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:00\.000Z$')"  # noqa
+        )
+        test_render(template)
+
+        template = (
+            '#set( $myString = "2020-01-20T08:00:00.000Z" )'
+            '$myString.matches("^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:00\.000Z$")'  # noqa
+        )
+        test_render(template)
+
+    def test_string_with_escaped_char(self, test_render):
+        template = "#set( $myString = '\{\n\t\r\%\5' )$myString"  # noqa
+        test_render(template)
+
+        template = '#set( $myString = "\{\n\t\r\%\5" )$myString'  # noqa
+        test_render(template)
+
+        template = "'\{\n\t\r\%\5'"  # noqa
+        test_render(template)
+
+        template = '"\{\n\t\r\%\5"'  # noqa
+        test_render(template)
+
 
 class TestInternals:
     """
