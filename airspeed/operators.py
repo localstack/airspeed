@@ -40,6 +40,7 @@ __additional_methods__ = {
         "contains": lambda self, value: value in self,
         "indexOf": lambda self, ch: self.index(ch),
         "substring": lambda self, start, end=None: self[start:end],
+        "matches": lambda self, pattern: bool(re.fullmatch(pattern, self)),
     },
     list: {
         "size": lambda self: len(self),
@@ -455,7 +456,7 @@ class BooleanLiteral(_Element):
 
 
 class StringLiteral(_Element):
-    STRING = re.compile(r"'((?:\\['nrbt\\\\\\$]|[^'\\])*)'(.*)", re.S)
+    STRING = re.compile(r"'([^']*)'(.*)", re.S)
     ESCAPED_CHAR = re.compile(r"\\([nrbt'\\])")
 
     def parse(self):

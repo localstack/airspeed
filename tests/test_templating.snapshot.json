@@ -1068,5 +1068,41 @@
       "render-result-1-cli": "\n                \"has-value\"\n        ",
       "render-result-1": "\"does-not-have-value\""
     }
+  },
+  "tests/test_templating.py::TestTemplating::test_string_matches_true": {
+    "recorded-date": "24-10-2024, 19:59:43",
+    "recorded-content": {
+      "render-result-1-cli": "true",
+      "render-result-1": "true"
+    }
+  },
+  "tests/test_templating.py::TestTemplating::test_string_matches_false": {
+    "recorded-date": "24-10-2024, 19:59:21",
+    "recorded-content": {
+      "render-result-1-cli": "false",
+      "render-result-1": "false"
+    }
+  },
+  "tests/test_templating.py::TestTemplating::test_string_with_escaped_char": {
+    "recorded-date": "24-10-2024, 22:14:20",
+    "recorded-content": {
+      "render-result-1-cli": "\\{\n\t\r\\%\u0005",
+      "render-result-1": "\\{\n\t\r\\%\u0005",
+      "render-result-2-cli": "\\{\n\t\r\\%\u0005",
+      "render-result-2": "\\{\n\t\r\\%\u0005",
+      "render-result-3-cli": "'\\{\n\t\r\\%\u0005'",
+      "render-result-3": "'\\{\n\t\r\\%\u0005'",
+      "render-result-4-cli": "\"\\{\n\t\r\\%\u0005\"",
+      "render-result-4": "\"\\{\n\t\r\\%\u0005\""
+    }
+  },
+  "tests/test_templating.py::TestTemplating::test_string_matches_full_date": {
+    "recorded-date": "24-10-2024, 21:58:12",
+    "recorded-content": {
+      "render-result-1-cli": "true",
+      "render-result-1": "true",
+      "render-result-2-cli": "true",
+      "render-result-2": "true"
+    }
   }
 }
