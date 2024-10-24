@@ -6,8 +6,8 @@ import textwrap
 import pytest
 import requests
 import six
-from localstack.constants import TEST_AWS_ACCOUNT_ID
 from localstack.testing.aws.util import is_aws_cloud
+from localstack.testing.config import TEST_AWS_ACCOUNT_ID
 from localstack.testing.pytest import fixtures
 from localstack.utils.archives import unzip
 from localstack.utils.files import save_file
