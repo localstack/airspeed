@@ -30,7 +30,7 @@ setup(
         "flake8-isort",
         "pytest",
         "pytest-httpserver",
-        "localstack-snapshot"
+        "localstack-snapshot",
     ]},
     test_suite="tests",
     tests_require=[],
