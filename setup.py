@@ -28,6 +28,7 @@ setup(
         "flake8",
         "flake8-black",
         "flake8-isort",
+        "localstack-core[runtime]",
         "pytest",
         "pytest-httpserver",
         "localstack-snapshot",

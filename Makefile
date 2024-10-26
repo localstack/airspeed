@@ -14,6 +14,7 @@ install:           ## Install dependencies in local virtualenv folder
 
 publish:           ## Publish the library to the central PyPi repository
 	# build and upload archive
+	$(VENV_RUN); $(PIP_CMD) install twine
 	$(VENV_RUN); ./setup.py sdist && twine upload $(BUILD_DIR)/*.tar.gz
 
 test:              ## Run automated tests
