@@ -1104,5 +1104,12 @@
       "render-result-2-cli": "true",
       "render-result-2": "true"
     }
+  },
+  "tests/test_templating.py::TestTemplating::test_floating_point_starting_with_decimal": {
+    "recorded-date": "10-11-2024, 04:53:47",
+    "recorded-content": {
+      "render-result-1-cli": "0.05",
+      "render-result-1": "0.05"
+    }
   }
 }

@@ -879,6 +879,10 @@ class TestTemplating:
         template = '"\{\n\t\r\%\5"'  # noqa
         test_render(template)
 
+    def test_floating_point_starting_with_decimal(self, test_render):
+        template = """#set($x = .5*.1)$x"""
+        test_render(template)
+
 
 class TestInternals:
     """
