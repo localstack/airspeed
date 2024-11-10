@@ -1210,14 +1210,36 @@ line")"""
 
     def test_doesnt_blow_stack(self, test_render):
         template = airspeed.Template(
-            """
-#foreach($i in [1..$end])
-    $assembly##
-#end
-"""
+            textwrap.dedent(
+                """
+                #foreach($i in [1..$end])
+                    $assembly##
+                #end
+                """
+            )
         )
         ns = {"end": 400}
         template.merge(ns)
+
+    def test_formal_reference_test_bypass(self, test_render_locally):
+        test_render = test_render_locally(
+            f'#set($bypass = "{airspeed.operators.REPLACE_FORMAL_TEXT}")$bypass'
+        )
+        assert test_render == "$bypass"
+
+        test_render_map = test_render_locally(
+            textwrap.dedent(
+                f"""
+                #set( $map = {{}})
+                #set($ignore = $map.put('bypass', "{airspeed.operators.REPLACE_FORMAL_TEXT}"))
+                #set($ignore = $map.put('no-bypass', "value"))
+                $map.bypass
+                $map.no-bypass
+                """
+            )
+        )
+
+        assert test_render_map == "\n$map.bypass\nvalue\n"
 
 
 class TestMacros:
