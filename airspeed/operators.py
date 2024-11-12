@@ -12,6 +12,10 @@ import six
 LOG = logging.getLogger(__name__)
 
 
+# This can be used by a function to bypass the silent behavior of a FormalReference.
+# If a function returns this value instead of None, the origial text of the reference will be returned instead.
+REPLACE_FORMAL_TEXT = "__FORMAL_REFERENCE__REPLACE_TEXT__"
+
 # A dict that maps classes to dicts of additional methods.
 # This allows support for methods that are available in Java-based Velocity
 # implementations, e.g., .size() of a list or .length() of a string.
@@ -434,7 +438,7 @@ class IntegerLiteral(_Element):
 
 
 class FloatingPointLiteral(_Element):
-    FLOAT = re.compile(r"(-?\d+\.\d+)(.*)", re.S)
+    FLOAT = re.compile(r"(-?\d*\.\d+)(.*)", re.S)
 
     def parse(self):
         (self.value,) = self.identity_match(self.FLOAT)
@@ -795,7 +799,9 @@ class FormalReference(_Element):
         value = None
         if self.expression is not None:
             value = self.expression.calculate(namespace, loader)
-        if value is None:
+        if value == REPLACE_FORMAL_TEXT:
+            value = self.my_text()
+        elif value is None:
             if self.alternate is not None:
                 value = self.alternate.calculate(namespace, loader) or ""
             elif self.silent and self.expression is not None:
