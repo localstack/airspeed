@@ -1097,7 +1097,7 @@
     }
   },
   "tests/test_templating.py::TestTemplating::test_string_matches_full_date": {
-    "recorded-date": "24-10-2024, 21:58:12",
+    "recorded-date": "16-05-2025, 18:29:38",
     "recorded-content": {
       "render-result-1-cli": "true",
       "render-result-1": "true",
@@ -1110,6 +1110,20 @@
     "recorded-content": {
       "render-result-1-cli": "0.05",
       "render-result-1": "0.05"
+    }
+  },
+  "tests/test_templating.py::TestTemplating::test_dict_assign_item_via_brackets": {
+    "recorded-date": "16-05-2025, 18:31:03",
+    "recorded-content": {
+      "render-result-1-cli": "{bar=foo}",
+      "render-result-1": "{bar=foo}"
+    }
+  },
+  "tests/test_templating.py::TestTemplating::test_array_assign_item_via_brackets": {
+    "recorded-date": "16-05-2025, 18:32:56",
+    "recorded-content": {
+      "render-result-1-cli": "[one, foo, three]",
+      "render-result-1": "[one, foo, three]"
     }
   }
 }

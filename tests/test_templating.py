@@ -808,6 +808,26 @@ class TestTemplating:
         )
         test_render(template, {"test_dict": {"k": "initial value"}})
 
+    def test_dict_assign_item_via_brackets(self, test_render):
+        # The specified element is set with the given value.
+        # Velocity tries first the 'set' method on the element, then 'put' to make the assignment.
+        template = (
+            "#set($test_dict = {} )"
+            "#set($key = 'bar')"
+            "#set( $test_dict[$key] = 'foo' )"
+            "$test_dict"
+        )
+        test_render(template, {})
+
+    def test_array_assign_item_via_brackets(self, test_render):
+        template = (
+            "#set($test_array = ['one', 'two', 'three'] )"
+            "#set($i = 1)"
+            "#set( $test_array[$i] = 'foo' )"
+            "$test_array"
+        )
+        test_render(template, {})
+
     def test_put_null_in_map(self, test_render):
         template = r"""
             #set( $myMap = {} )
