@@ -1120,10 +1120,17 @@
     }
   },
   "tests/test_templating.py::TestTemplating::test_array_assign_item_via_brackets": {
-    "recorded-date": "16-05-2025, 18:32:56",
+    "recorded-date": "16-05-2025, 19:14:01",
     "recorded-content": {
-      "render-result-1-cli": "[one, foo, three]",
-      "render-result-1": "[one, foo, three]"
+      "render-result-1-cli": "onefoothree",
+      "render-result-1": "onefoothree"
+    }
+  },
+  "tests/test_templating.py::TestTemplating::test_array_set_item": {
+    "recorded-date": "16-05-2025, 19:13:41",
+    "recorded-content": {
+      "render-result-1-cli": "twoonefoothree",
+      "render-result-1": "twoonefoothree"
     }
   }
 }

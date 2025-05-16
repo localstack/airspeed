@@ -32,6 +32,17 @@ def dict_put(self, key, value):
     return existing
 
 
+def array_set(self, index, value):
+    try:
+        existing = self[index]
+    except IndexError:
+        raise TemplateExecutionError
+
+    self[index] = value
+    return existing
+
+
+
 def dict_to_string(obj: dict) -> str:
     return "{" + ", ".join([f"{k}={v}" for k, v in obj.items()]) + "}"
 
@@ -52,6 +63,7 @@ __additional_methods__ = {
         "contains": lambda self, value: value in self,
         "add": lambda self, value: self.append(value),
         "isEmpty": lambda self: len(self) == 0,
+        "set": array_set,
     },
     dict: {
         "put": dict_put,
@@ -1069,18 +1081,20 @@ class IfDirective(_Element):
 # yet
 class Assignment(_Element):
     START = re.compile(
-        r"\s*\(\s*\$(\w*(?:\.[\w-]+|\[\"\$\w+\"\]*)*)\s*=\s*(.*)$", re.S + re.I
+        r"\s*\(\s*\$(\w*(?:\.[\w-]+|\[\"?\$\w+\"?\]*)*)\s*=\s*(.*)$", re.S + re.I
     )
     END = re.compile(r"\s*\)(?:[ \t]*\r?\n)?(.*)$", re.S + re.M)
 
     def parse(self):
         (var_name,) = self.identity_match(self.START)
+        print(f"{var_name=}")
         self.terms = var_name.split(".")
         self.value = self.require_next_element(Expression, "expression")
         self.require_match(self.END, ")")
 
     def evaluate_raw(self, stream, namespace, loader):
         val = self.value.calculate(namespace, loader)
+        print(f"{val=} / {self.terms=}")
         if len(self.terms) == 1:
             namespace.set_inherited(self.terms[0], val)
         else:

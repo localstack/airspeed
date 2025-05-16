@@ -824,7 +824,15 @@ class TestTemplating:
             "#set($test_array = ['one', 'two', 'three'] )"
             "#set($i = 1)"
             "#set( $test_array[$i] = 'foo' )"
-            "$test_array"
+            "#foreach ($item in $test_array)$item#end"
+        )
+        test_render(template, {})
+
+    def test_array_set_item(self, test_render):
+        template = (
+            "#set($test_array = ['one', 'two', 'three'] )"
+            "$test_array.set(1, 'foo')"
+            "#foreach ($item in $test_array)$item#end"
         )
         test_render(template, {})
 
@@ -1513,6 +1521,15 @@ class TestNegativeCases:
             assert e.get_position_strings() == ["  #else whatever", "  ^"]
         else:
             pytest.fail("expected error")
+
+    def test_array_set_item_outside_range(self, test_render):
+        template = airspeed.Template(
+            "#set($test_array = ['one', 'two', 'three'] )"
+            "$test_array.set(5, 'foo')"
+            "$test_array"
+        )
+        with pytest.raises(airspeed.TemplateExecutionError):
+            template.merge({})
 
 
 @pytest.mark.skip(reason="Invalid syntax, failing against VTL CLI and/or AWS")
