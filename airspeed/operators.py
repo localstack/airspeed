@@ -1081,20 +1081,18 @@ class IfDirective(_Element):
 # yet
 class Assignment(_Element):
     START = re.compile(
-        r"\s*\(\s*\$(\w*(?:\.[\w-]+|\[\"?\$\w+\"?\]*)*)\s*=\s*(.*)$", re.S + re.I
+        r"\s*\(\s*\$(\w*(?:\.[\w-]+|\[\"\$\w+\"\]*)*)\s*=\s*(.*)$", re.S + re.I
     )
     END = re.compile(r"\s*\)(?:[ \t]*\r?\n)?(.*)$", re.S + re.M)
 
     def parse(self):
         (var_name,) = self.identity_match(self.START)
-        print(f"{var_name=}")
         self.terms = var_name.split(".")
         self.value = self.require_next_element(Expression, "expression")
         self.require_match(self.END, ")")
 
     def evaluate_raw(self, stream, namespace, loader):
         val = self.value.calculate(namespace, loader)
-        print(f"{val=} / {self.terms=}")
         if len(self.terms) == 1:
             namespace.set_inherited(self.terms[0], val)
         else:
