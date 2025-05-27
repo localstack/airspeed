@@ -819,6 +819,17 @@ class TestTemplating:
         )
         test_render(template, {})
 
+    def test_dict_assign_quoted_item_via_brackets(self, test_render):
+        # The specified element is set with the given value.
+        # Velocity tries first the 'set' method on the element, then 'put' to make the assignment.
+        template = (
+            "#set($test_dict = {} )"
+            "#set($key = 'bar')"
+            "#set( $test_dict[\"$key\"] = 'foo' )"
+            "$test_dict"
+        )
+        test_render(template, {})
+
     def test_array_assign_item_via_brackets(self, test_render):
         template = (
             "#set($test_array = ['one', 'two', 'three'] )"
