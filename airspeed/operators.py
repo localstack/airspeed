@@ -42,7 +42,6 @@ def array_set(self, index, value):
     return existing
 
 
-
 def dict_to_string(obj: dict) -> str:
     return "{" + ", ".join([f"{k}={v}" for k, v in obj.items()]) + "}"
 
@@ -1080,14 +1079,47 @@ class IfDirective(_Element):
 # set($one.two().three = something)
 # yet
 class Assignment(_Element):
+    terms: list
     START = re.compile(
-        r"\s*\(\s*\$(\w*(?:\.[\w-]+|\[\"\$\w+\"\]*)*)\s*=\s*(.*)$", re.S + re.I
+        # first group stops at the first '$' encountered. self.end will be set at the first char of the variable
+        r"\s*(\(\s*\$)(\w*(?:\.[\w-]+|\[\"\$?\w+\"]|\[\$\w+])*\s*=\s*.*)$", re.S + re.I
+    )
+    TERMS = re.compile(
+        # Breaks all terms into captured group, the last captured group is the first char after '= '. This will allow
+        # us to set self.end to the beginning of the next expression after finding all terms
+        # `($foo.bar["super"][$foo] = 'bar'` will become `[ 'foo', '.bar', '["super"]', '[$foo]', "'bar'" ]`
+        r"\s*\(\s*\$(\w*)(\.[\w-]+|\[\"?\$?\w+\"?])*\s*=\s*(.*)$", re.S + re.I
     )
     END = re.compile(r"\s*\)(?:[ \t]*\r?\n)?(.*)$", re.S + re.M)
 
     def parse(self):
-        (var_name,) = self.identity_match(self.START)
-        self.terms = var_name.split(".")
+        self.identity_match(self.START)
+        matched_terms = self.TERMS.match(self._full_text, self.start)
+        self.terms = []
+        for term in matched_terms.groups()[:-1]:
+            if term is None:
+                # Second group is optional and can be None
+                break
+            if term.startswith("."):
+                # handles .bar
+                self.end += len(term)
+                self.terms.append(term[1:])
+            elif "$" in term:
+                # handles ["$foo"] and [$foo]
+                # skipping over '['
+                self.end += 1
+                # We might be handling too much with Expression and allow more than is allowed on aws, we will have
+                # to see if we get issues in the future.
+                self.terms.append(self.require_next_element(Expression, "expression"))
+                # skipping over ']'
+                self.end += 1
+            else:
+                # handles ["super"]
+                self.end += len(term)
+                self.terms.append(term.strip('[]"'))
+
+        # move the end to the start of the last group
+        self.end = matched_terms.start(self.TERMS.groups)
         self.value = self.require_next_element(Expression, "expression")
         self.require_match(self.END, ")")
 
@@ -1098,8 +1130,13 @@ class Assignment(_Element):
         else:
             cur = namespace
             for term in self.terms[:-1]:
+                if isinstance(term, Expression):
+                    term = term.calculate(namespace, loader)
                 cur = cur[term]
-            cur[self.terms[-1]] = val
+            last_term = self.terms[-1]
+            if isinstance(last_term, Expression):
+                last_term = last_term.calculate(namespace, loader)
+            cur[last_term] = val
 
 
 class EvaluateDirective(_Element):
