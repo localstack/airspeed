@@ -815,7 +815,7 @@ class TestTemplating:
             "#set($test_dict = {} )"
             "#set($key = 'bar')"
             "#set( $test_dict[$key] = 'foo' )"
-            "$test_dict"
+            "$test_dict.toString()"
         )
         test_render(template, {})
 
@@ -826,7 +826,7 @@ class TestTemplating:
             "#set($test_dict = {} )"
             "#set($key = 'bar')"
             "#set( $test_dict[\"$key\"] = 'foo' )"
-            "$test_dict"
+            "$test_dict.toString()"
         )
         test_render(template, {})
 

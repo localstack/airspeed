@@ -1113,7 +1113,7 @@
     }
   },
   "tests/test_templating.py::TestTemplating::test_dict_assign_item_via_brackets": {
-    "recorded-date": "27-05-2025, 16:38:00",
+    "recorded-date": "28-05-2025, 11:06:27",
     "recorded-content": {
       "render-result-1-cli": "{bar=foo}",
       "render-result-1": "{bar=foo}"
@@ -1134,7 +1134,7 @@
     }
   },
   "tests/test_templating.py::TestTemplating::test_dict_assign_quoted_item_via_brackets": {
-    "recorded-date": "27-05-2025, 16:39:00",
+    "recorded-date": "28-05-2025, 11:06:39",
     "recorded-content": {
       "render-result-1-cli": "{bar=foo}",
       "render-result-1": "{bar=foo}"
