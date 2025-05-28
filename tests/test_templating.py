@@ -830,6 +830,16 @@ class TestTemplating:
         )
         test_render(template, {})
 
+    def test_dict_assign_nested_items_via_brackets(self, test_render):
+        template = (
+            "#set($test_dict = {} )"
+            "#set($key = 'bar')"
+            '#set( $test_dict["$key"] = {} )'
+            '#set($test_dict["$key"].nested = "foo")'
+            '$test_dict.bar["nested"]'
+        )
+        test_render(template, {})
+
     def test_array_assign_item_via_brackets(self, test_render):
         template = (
             "#set($test_array = ['one', 'two', 'three'] )"

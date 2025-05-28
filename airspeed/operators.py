@@ -1082,23 +1082,22 @@ class Assignment(_Element):
     terms: list
     START = re.compile(
         # first group stops at the first '$' encountered. self.end will be set at the first char of the variable
-        r"\s*(\(\s*\$)(\w*(?:\.[\w-]+|\[\"\$?\w+\"]|\[\$\w+])*\s*=\s*.*)$", re.S + re.I
-    )
-    TERMS = re.compile(
-        # Breaks all terms into captured group, the last captured group is the first char after '= '. This will allow
-        # us to set self.end to the beginning of the next expression after finding all terms
-        # `($foo.bar["super"][$foo] = 'bar'` will become `[ 'foo', '.bar', '["super"]', '[$foo]', "'bar'" ]`
-        r"\s*\(\s*\$(\w*)(\.[\w-]+|\[\"?\$?\w+\"?])*\s*=\s*(.*)$", re.S + re.I
+        r"\s*(\(\s*\$)(\w*(?:\.[\w-]+|\[\"\$?\w+\"]|\[\$\w+])*\s*=\s*.*)$",
+        re.S + re.I,
     )
     END = re.compile(r"\s*\)(?:[ \t]*\r?\n)?(.*)$", re.S + re.M)
+    # Allows us to match all terms. We are also matching on `=` so we can exit
+    TERMS = re.compile(r"(\.?\w+|\[[\"$]*\w+\"?]|=)", re.S + re.I)
+    TERMS_END = re.compile(r"\s*=\s*(.*)$", re.S)
 
     def parse(self):
         self.identity_match(self.START)
-        matched_terms = self.TERMS.match(self._full_text, self.start)
+
         self.terms = []
-        for term in matched_terms.groups()[:-1]:
-            if term is None:
-                # Second group is optional and can be None
+        for term_match in self.TERMS.finditer(self._full_text, self.start):
+            term = term_match.group(0)
+            if term == "=":
+                # If we matched the `=` we have gone through the whole variable definition
                 break
             if term.startswith("."):
                 # handles .bar
@@ -1118,8 +1117,7 @@ class Assignment(_Element):
                 self.end += len(term)
                 self.terms.append(term.strip('[]"'))
 
-        # move the end to the start of the last group
-        self.end = matched_terms.start(self.TERMS.groups)
+        self.require_match(self.TERMS_END, "=")
         self.value = self.require_next_element(Expression, "expression")
         self.require_match(self.END, ")")
 
