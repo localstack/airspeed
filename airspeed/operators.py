@@ -1082,11 +1082,12 @@ class Assignment(_Element):
     terms: list
     START = re.compile(
         # first group stops at the first '$' encountered. self.end will be set at the first char of the variable
+        # Currently supported in assignment are: `$root`, `.dot`. `["bracket"]`, `[$var]` and `["$quoted_var"]`
         r"\s*(\(\s*\$)(\w*(?:\.[\w-]+|\[\"\$?\w+\"]|\[\$\w+])*\s*=\s*.*)$",
         re.S + re.I,
     )
     END = re.compile(r"\s*\)(?:[ \t]*\r?\n)?(.*)$", re.S + re.M)
-    # Allows us to match all terms. We are also matching on `=` so we can exit
+    # Allows us to match all supported terms. We are also matching on `=` so we can exit
     TERMS = re.compile(r"(\.?\w+|\[[\"$]*\w+\"?]|=)", re.S + re.I)
     TERMS_END = re.compile(r"\s*=\s*(.*)$", re.S)
 
@@ -1100,20 +1101,21 @@ class Assignment(_Element):
                 # If we matched the `=` we have gone through the whole variable definition
                 break
             if term.startswith("."):
-                # handles .bar
+                # handles .dot
                 self.end += len(term)
                 self.terms.append(term[1:])
             elif "$" in term:
-                # handles ["$foo"] and [$foo]
+                # handles ["$quoted_var"] and [$var]
                 # skipping over '['
                 self.end += 1
-                # We might be handling too much with Expression and allow more than is allowed on aws, we will have
-                # to see if we get issues in the future.
-                self.terms.append(self.require_next_element(Expression, "expression"))
+                # `Value` handles a lot more than we need, but since we are pretty restrictive on the
+                # `identity_match`, it shouldn't be an issue. If it comes up as a problem in the future we can
+                # restrict the list further
+                self.terms.append(self.require_next_element(Value, "value"))
                 # skipping over ']'
                 self.end += 1
             else:
-                # handles ["super"]
+                # handles ["bracket"] and root
                 self.end += len(term)
                 self.terms.append(term.strip('[]"'))
 
@@ -1128,13 +1130,14 @@ class Assignment(_Element):
         else:
             cur = namespace
             for term in self.terms[:-1]:
-                if isinstance(term, Expression):
-                    term = term.calculate(namespace, loader)
-                cur = cur[term]
-            last_term = self.terms[-1]
-            if isinstance(last_term, Expression):
-                last_term = last_term.calculate(namespace, loader)
-            cur[last_term] = val
+                cur = cur[self._calculate_term(term, namespace, loader)]
+            cur[self._calculate_term(self.terms[-1], namespace, loader)] = val
+
+    @staticmethod
+    def _calculate_term(term, namespace, loader):
+        if isinstance(term, Value):
+            return term.calculate(namespace, loader)
+        return term
 
 
 class EvaluateDirective(_Element):

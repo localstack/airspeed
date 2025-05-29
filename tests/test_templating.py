@@ -840,6 +840,14 @@ class TestTemplating:
         )
         test_render(template, {})
 
+    def test_dict_assign_var_not_found(self, test_render):
+        template = (
+            "#set($test_dict = {})"
+            '#set($test_dict["$key"] = "foo")'
+            "$test_dict.toString()"
+        )
+        test_render(template, {})
+
     def test_array_assign_item_via_brackets(self, test_render):
         template = (
             "#set($test_array = ['one', 'two', 'three'] )"
