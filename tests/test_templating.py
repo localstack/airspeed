@@ -808,6 +808,63 @@ class TestTemplating:
         )
         test_render(template, {"test_dict": {"k": "initial value"}})
 
+    def test_dict_assign_item_via_brackets(self, test_render):
+        # The specified element is set with the given value.
+        # Velocity tries first the 'set' method on the element, then 'put' to make the assignment.
+        template = (
+            "#set($test_dict = {} )"
+            "#set($key = 'bar')"
+            "#set( $test_dict[$key] = 'foo' )"
+            "$test_dict.toString()"
+        )
+        test_render(template, {})
+
+    def test_dict_assign_quoted_item_via_brackets(self, test_render):
+        # The specified element is set with the given value.
+        # Velocity tries first the 'set' method on the element, then 'put' to make the assignment.
+        template = (
+            "#set($test_dict = {} )"
+            "#set($key = 'bar')"
+            "#set( $test_dict[\"$key\"] = 'foo' )"
+            "$test_dict.toString()"
+        )
+        test_render(template, {})
+
+    def test_dict_assign_nested_items_via_brackets(self, test_render):
+        template = (
+            "#set($test_dict = {} )"
+            "#set($key = 'bar')"
+            '#set( $test_dict["$key"] = {} )'
+            '#set($test_dict["$key"].nested = "foo")'
+            '$test_dict.bar["nested"]'
+        )
+        test_render(template, {})
+
+    def test_dict_assign_var_not_found(self, test_render):
+        template = (
+            "#set($test_dict = {})"
+            '#set($test_dict["$key"] = "foo")'
+            "$test_dict.toString()"
+        )
+        test_render(template, {})
+
+    def test_array_assign_item_via_brackets(self, test_render):
+        template = (
+            "#set($test_array = ['one', 'two', 'three'] )"
+            "#set($i = 1)"
+            "#set( $test_array[$i] = 'foo' )"
+            "#foreach ($item in $test_array)$item#end"
+        )
+        test_render(template, {})
+
+    def test_array_set_item(self, test_render):
+        template = (
+            "#set($test_array = ['one', 'two', 'three'] )"
+            "$test_array.set(1, 'foo')"
+            "#foreach ($item in $test_array)$item#end"
+        )
+        test_render(template, {})
+
     def test_put_null_in_map(self, test_render):
         template = r"""
             #set( $myMap = {} )
@@ -1493,6 +1550,15 @@ class TestNegativeCases:
             assert e.get_position_strings() == ["  #else whatever", "  ^"]
         else:
             pytest.fail("expected error")
+
+    def test_array_set_item_outside_range(self, test_render):
+        template = airspeed.Template(
+            "#set($test_array = ['one', 'two', 'three'] )"
+            "$test_array.set(5, 'foo')"
+            "$test_array"
+        )
+        with pytest.raises(airspeed.TemplateExecutionError):
+            template.merge({})
 
 
 @pytest.mark.skip(reason="Invalid syntax, failing against VTL CLI and/or AWS")

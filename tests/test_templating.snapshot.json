@@ -1097,7 +1097,7 @@
     }
   },
   "tests/test_templating.py::TestTemplating::test_string_matches_full_date": {
-    "recorded-date": "24-10-2024, 21:58:12",
+    "recorded-date": "16-05-2025, 18:29:38",
     "recorded-content": {
       "render-result-1-cli": "true",
       "render-result-1": "true",
@@ -1110,6 +1110,48 @@
     "recorded-content": {
       "render-result-1-cli": "0.05",
       "render-result-1": "0.05"
+    }
+  },
+  "tests/test_templating.py::TestTemplating::test_dict_assign_item_via_brackets": {
+    "recorded-date": "28-05-2025, 11:06:27",
+    "recorded-content": {
+      "render-result-1-cli": "{bar=foo}",
+      "render-result-1": "{bar=foo}"
+    }
+  },
+  "tests/test_templating.py::TestTemplating::test_array_assign_item_via_brackets": {
+    "recorded-date": "16-05-2025, 19:14:01",
+    "recorded-content": {
+      "render-result-1-cli": "onefoothree",
+      "render-result-1": "onefoothree"
+    }
+  },
+  "tests/test_templating.py::TestTemplating::test_array_set_item": {
+    "recorded-date": "16-05-2025, 19:13:41",
+    "recorded-content": {
+      "render-result-1-cli": "twoonefoothree",
+      "render-result-1": "twoonefoothree"
+    }
+  },
+  "tests/test_templating.py::TestTemplating::test_dict_assign_quoted_item_via_brackets": {
+    "recorded-date": "28-05-2025, 11:06:39",
+    "recorded-content": {
+      "render-result-1-cli": "{bar=foo}",
+      "render-result-1": "{bar=foo}"
+    }
+  },
+  "tests/test_templating.py::TestTemplating::test_dict_assign_nested_items_via_brackets": {
+    "recorded-date": "29-05-2025, 11:56:01",
+    "recorded-content": {
+      "render-result-1-cli": "foo",
+      "render-result-1": "foo"
+    }
+  },
+  "tests/test_templating.py::TestTemplating::test_dict_assign_var_not_found": {
+    "recorded-date": "29-05-2025, 12:07:42",
+    "recorded-content": {
+      "render-result-1-cli": "{$key=foo}",
+      "render-result-1": "{=foo}"
     }
   }
 }

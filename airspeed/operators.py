@@ -32,6 +32,16 @@ def dict_put(self, key, value):
     return existing
 
 
+def array_set(self, index, value):
+    try:
+        existing = self[index]
+    except IndexError:
+        raise TemplateExecutionError
+
+    self[index] = value
+    return existing
+
+
 def dict_to_string(obj: dict) -> str:
     return "{" + ", ".join([f"{k}={v}" for k, v in obj.items()]) + "}"
 
@@ -52,6 +62,7 @@ __additional_methods__ = {
         "contains": lambda self, value: value in self,
         "add": lambda self, value: self.append(value),
         "isEmpty": lambda self: len(self) == 0,
+        "set": array_set,
     },
     dict: {
         "put": dict_put,
@@ -1068,14 +1079,47 @@ class IfDirective(_Element):
 # set($one.two().three = something)
 # yet
 class Assignment(_Element):
+    terms: list
     START = re.compile(
-        r"\s*\(\s*\$(\w*(?:\.[\w-]+|\[\"\$\w+\"\]*)*)\s*=\s*(.*)$", re.S + re.I
+        # first group stops at the first '$' encountered. self.end will be set at the first char of the variable
+        # Currently supported in assignment are: `$root`, `.dot`. `["bracket"]`, `[$var]` and `["$quoted_var"]`
+        r"\s*(\(\s*\$)(\w*(?:\.[\w-]+|\[\"\$?\w+\"]|\[\$\w+])*\s*=\s*.*)$",
+        re.S + re.I,
     )
     END = re.compile(r"\s*\)(?:[ \t]*\r?\n)?(.*)$", re.S + re.M)
+    # Allows us to match all supported terms. We are also matching on `=` so we can exit
+    TERMS = re.compile(r"(\.?\w+|\[[\"$]*\w+\"?]|=)", re.S + re.I)
+    TERMS_END = re.compile(r"\s*=\s*(.*)$", re.S)
 
     def parse(self):
-        (var_name,) = self.identity_match(self.START)
-        self.terms = var_name.split(".")
+        self.identity_match(self.START)
+
+        self.terms = []
+        for term_match in self.TERMS.finditer(self._full_text, self.start):
+            term = term_match.group(0)
+            if term == "=":
+                # If we matched the `=` we have gone through the whole variable definition
+                break
+            if term.startswith("."):
+                # handles .dot
+                self.end += len(term)
+                self.terms.append(term[1:])
+            elif "$" in term:
+                # handles ["$quoted_var"] and [$var]
+                # skipping over '['
+                self.end += 1
+                # `Value` handles a lot more than we need, but since we are pretty restrictive on the
+                # `identity_match`, it shouldn't be an issue. If it comes up as a problem in the future we can
+                # restrict the list further
+                self.terms.append(self.require_next_element(Value, "value"))
+                # skipping over ']'
+                self.end += 1
+            else:
+                # handles ["bracket"] and root
+                self.end += len(term)
+                self.terms.append(term.strip('[]"'))
+
+        self.require_match(self.TERMS_END, "=")
         self.value = self.require_next_element(Expression, "expression")
         self.require_match(self.END, ")")
 
@@ -1086,8 +1130,14 @@ class Assignment(_Element):
         else:
             cur = namespace
             for term in self.terms[:-1]:
-                cur = cur[term]
-            cur[self.terms[-1]] = val
+                cur = cur[self._calculate_term(term, namespace, loader)]
+            cur[self._calculate_term(self.terms[-1], namespace, loader)] = val
+
+    @staticmethod
+    def _calculate_term(term, namespace, loader):
+        if isinstance(term, Value):
+            return term.calculate(namespace, loader)
+        return term
 
 
 class EvaluateDirective(_Element):
