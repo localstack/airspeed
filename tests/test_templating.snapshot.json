@@ -1139,5 +1139,12 @@
       "render-result-1-cli": "{bar=foo}",
       "render-result-1": "{bar=foo}"
     }
+  },
+  "tests/test_templating.py::TestTemplating::test_dict_assign_nested_items_via_brackets": {
+    "recorded-date": "29-05-2025, 11:56:01",
+    "recorded-content": {
+      "render-result-1-cli": "foo",
+      "render-result-1": "foo"
+    }
   }
 }
