@@ -4,8 +4,8 @@ from setuptools import find_packages, setup
 
 
 setup(
-    name="airspeed-ext",
-    version="0.6.8",
+    name="airspeed_ext",
+    version="0.6.9",
     description=(
         "Airspeed is a powerful and easy-to-use templating engine "
         "for Python that aims for a high level of compatibility "

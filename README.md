@@ -8,6 +8,7 @@ This is a fork of the original [`airspeed`](https://github.com/purcell/airspeed)
 ⚠️ Note: This fork of `airspeed` focuses on providing maximum parity with AWS' implementation of Velocity templates (used in, e.g., API Gateway or AppSync). In some cases, the behavior may diverge from the VTL spec, or from the Velocity [reference implementation](https://velocity.apache.org/download.cgi).
 
 ## Change Log:
+* v0.6.9: Small improvement of `Assignment`, introducing `AssignmentTerm` to help future expandability.
 * v0.6.8: Added support for bracket in Assignment with `#set`; Added support for `Array.set`
 * v0.6.7: fix support for floating point starting with a decimal; Implement `REPLACE_FORMAL_TEXT` to allow bypassing silent behavior of `FormalReference` element.
 * v0.6.6: add support for `$string.matches( $pattern )`; fix bug where some escaped character would prevent string matching
