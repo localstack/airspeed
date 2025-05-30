@@ -1075,49 +1075,64 @@ class IfDirective(_Element):
             self.else_block.evaluate(stream, namespace, loader)
 
 
+class DotDictAccessTerm(_Element):
+    START = re.compile(r"\.([\w-]+)(.*)$", re.S + re.I)
+    value: str
+
+    def parse(self):
+        (self.value,) = self.identity_match(self.START)
+
+    def calculate(self, namespace, loader):
+        return self.value
+
+
+class BracketedValueTerm(_Element):
+    START = re.compile(r'(\[)\s*(.+)$', re.S + re.I)
+    END = re.compile(r"\s*](.*)$", re.S)
+    value: Value
+
+    def parse(self):
+        self.identity_match(self.START)
+        self.value = self.require_next_element(Value, "value")
+        self.require_match(self.END, "]")
+
+    def calculate(self, namespace, loader):
+        return self.value.calculate(namespace, loader)
+
+
+class AssignmentTerm(_Element):
+    term: DotDictAccessTerm | BracketedValueTerm
+
+    def parse(self):
+        self.term = self.next_element(
+            [DotDictAccessTerm, BracketedValueTerm]
+        )
+
+    def calculate(self, namespace, loader):
+        return self.term.calculate(namespace, loader)
+
+
 # This can't deal with assignments like
 # set($one.two().three = something)
 # yet
 class Assignment(_Element):
-    terms: list
-    START = re.compile(
-        # first group stops at the first '$' encountered. self.end will be set at the first char of the variable
-        # Currently supported in assignment are: `$root`, `.dot`. `["bracket"]`, `[$var]` and `["$quoted_var"]`
-        r"\s*(\(\s*\$)(\w*(?:\.[\w-]+|\[\"\$?\w+\"]|\[\$\w+])*\s*=\s*.*)$",
-        re.S + re.I,
-    )
+    START = re.compile(f"\s*\(\s*\$(\w+)(.*)$", re.S + re.I)
     END = re.compile(r"\s*\)(?:[ \t]*\r?\n)?(.*)$", re.S + re.M)
-    # Allows us to match all supported terms. We are also matching on `=` so we can exit
-    TERMS = re.compile(r"(\.?\w+|\[[\"$]*\w+\"?]|=)", re.S + re.I)
     TERMS_END = re.compile(r"\s*=\s*(.*)$", re.S)
 
+    root_term: str
+    terms: list[AssignmentTerm]
+    value: Expression
+
     def parse(self):
-        self.identity_match(self.START)
+        (self.root_term,) = self.identity_match(self.START)
 
         self.terms = []
-        for term_match in self.TERMS.finditer(self._full_text, self.start):
-            term = term_match.group(0)
-            if term == "=":
-                # If we matched the `=` we have gone through the whole variable definition
+        while True:
+            try:
+                self.terms.append(self.next_element(AssignmentTerm))
+            except NoMatch:
                 break
-            if term.startswith("."):
-                # handles .dot
-                self.end += len(term)
-                self.terms.append(term[1:])
-            elif "$" in term:
-                # handles ["$quoted_var"] and [$var]
-                # skipping over '['
-                self.end += 1
-                # `Value` handles a lot more than we need, but since we are pretty restrictive on the
-                # `identity_match`, it shouldn't be an issue. If it comes up as a problem in the future we can
-                # restrict the list further
-                self.terms.append(self.require_next_element(Value, "value"))
-                # skipping over ']'
-                self.end += 1
-            else:
-                # handles ["bracket"] and root
-                self.end += len(term)
-                self.terms.append(term.strip('[]"'))
 
         self.require_match(self.TERMS_END, "=")
         self.value = self.require_next_element(Expression, "expression")
@@ -1125,19 +1140,15 @@ class Assignment(_Element):
 
     def evaluate_raw(self, stream, namespace, loader):
         val = self.value.calculate(namespace, loader)
-        if len(self.terms) == 1:
-            namespace.set_inherited(self.terms[0], val)
-        else:
-            cur = namespace
-            for term in self.terms[:-1]:
-                cur = cur[self._calculate_term(term, namespace, loader)]
-            cur[self._calculate_term(self.terms[-1], namespace, loader)] = val
 
-    @staticmethod
-    def _calculate_term(term, namespace, loader):
-        if isinstance(term, Value):
-            return term.calculate(namespace, loader)
-        return term
+        if not self.terms:
+            return namespace.set_inherited(self.root_term, val)
+
+        cur = namespace[self.root_term]
+        for term in self.terms[:-1]:
+            cur = cur[term.calculate(namespace, loader)]
+
+        cur[self.terms[-1].calculate(namespace, loader)] = val
 
 
 class EvaluateDirective(_Element):
