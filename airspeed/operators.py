@@ -1087,7 +1087,7 @@ class DotDictAccessTerm(_Element):
 
 
 class BracketedValueTerm(_Element):
-    START = re.compile(r'(\[)\s*(.+)$', re.S + re.I)
+    START = re.compile(r"(\[)\s*(.+)$", re.S + re.I)
     END = re.compile(r"\s*](.*)$", re.S)
     value: Value
 
@@ -1104,9 +1104,7 @@ class AssignmentTerm(_Element):
     term: DotDictAccessTerm | BracketedValueTerm
 
     def parse(self):
-        self.term = self.next_element(
-            [DotDictAccessTerm, BracketedValueTerm]
-        )
+        self.term = self.next_element([DotDictAccessTerm, BracketedValueTerm])
 
     def calculate(self, namespace, loader):
         return self.term.calculate(namespace, loader)
@@ -1116,7 +1114,7 @@ class AssignmentTerm(_Element):
 # set($one.two().three = something)
 # yet
 class Assignment(_Element):
-    START = re.compile(f"\s*\(\s*\$(\w+)(.*)$", re.S + re.I)
+    START = re.compile(r"\s*\(\s*\$(\w+)(.*)$", re.S + re.I)
     END = re.compile(r"\s*\)(?:[ \t]*\r?\n)?(.*)$", re.S + re.M)
     TERMS_END = re.compile(r"\s*=\s*(.*)$", re.S)
 
