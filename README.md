@@ -3,7 +3,7 @@
 
 # Airspeed - a Python template engine
 
-This is a fork of the original [`airspeed`](https://github.com/purcell/airspeed) library, with some extensions used in [LocalStack](https://github.com/localstack/localstack).
+This is a fork of the original [`airspeed`](https://github.com/purcell/airspeed) library, with some extensions used in [LocalStack for AWS](https://www.localstack.cloud/localstack-for-aws).
 
 ⚠️ Note: This fork of `airspeed` focuses on providing maximum parity with AWS' implementation of Velocity templates (used in, e.g., API Gateway or AppSync). In some cases, the behavior may diverge from the VTL spec, or from the Velocity [reference implementation](https://velocity.apache.org/download.cgi).
 
