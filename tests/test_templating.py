@@ -46,12 +46,10 @@ def test_render_on_aws(aws_client, create_rest_apigw, snapshot):
 
         # construct response template with VTL template and input variables
         variable_defs = " ".join(f"#set(${var} = $bodyJSON.{var})" for var in context)
-        response_template = textwrap.dedent(
-            """
+        response_template = textwrap.dedent("""
         #set($body = $context.requestOverride.path.body)
         #set($bodyJSON = $util.parseJson($body)) %s
-        %s"""
-        ).lstrip("\n")
+        %s""").lstrip("\n")
         response_template = response_template % (variable_defs, template)
 
         # create API Gateway API, method, integration response
@@ -76,14 +74,12 @@ def test_render_on_aws(aws_client, create_rest_apigw, snapshot):
             httpMethod="POST",
             integrationHttpMethod="POST",
             type="MOCK",
-            requestTemplates={
-                "application/json": """
+            requestTemplates={"application/json": """
             #set($context.requestOverride.path.body = $input.body)
             {
               "statusCode": 200,
             }
-            """
-            },
+            """},
         )
         aws_client.apigateway.put_integration_response(
             restApiId=api_id,
@@ -427,8 +423,7 @@ class TestTemplating:
 
     @pytest.mark.xfail(reason="Discrepancy with AWS - invalid escaping of \\$email")
     def test_velocity_style_escaping(self, test_render):  # example from Velocity docs
-        template = textwrap.dedent(
-            r"""
+        template = textwrap.dedent(r"""
             #set( $email = "foo" )
             $email
             \$email
@@ -438,8 +433,7 @@ class TestTemplating:
             \#end
             \# end
             \#set( $email = "foo" )
-            """
-        )
+            """)
         test_render(template)
 
     # def test_velocity_style_escaping_when_var_unset(self, test_render): # example from Velocity docs
@@ -569,20 +563,17 @@ class TestTemplating:
         )
 
     def test_use_defined_func_multiple_times(self, test_render):
-        template = textwrap.dedent(
-            """
+        template = textwrap.dedent("""
             #define( $myfunc )$ctx#end
             #set( $ctx = 'foo' )
             $myfunc
             #set( $ctx = 'bar' )
             $myfunc
-        """
-        )
+        """)
         test_render(template)
 
     def test_use_defined_func_create_json_loop(self, test_render):
-        template = textwrap.dedent(
-            """
+        template = textwrap.dedent("""
         #define( $loop ) {
             #foreach($e in $map.keySet())
                 #set( $k = $e )
@@ -595,8 +586,7 @@ class TestTemplating:
         $loop
         #set( $map = {'foo':'bar'} )
         $loop
-        """
-        )
+        """)
         test_render(
             template,
             {"map": {"test": 123, "test2": "abc"}},
@@ -706,12 +696,10 @@ class TestTemplating:
         test_render("#set($a = {})$a")
 
     def test_if_whitespace_and_newlines_ignored(self, test_render):
-        template = textwrap.dedent(
-            """
+        template = textwrap.dedent("""
             #if(true)
             hello##
-            #end"""
-        )
+            #end""")
         test_render(template)
 
     def test_expressions_with_numbers_with_fractions(self, test_render):
@@ -1234,10 +1222,8 @@ class TestInternals:
             def func(self, arg):
                 return "y"
 
-        template = airspeed.Template(
-            """$x.func("multi
-line")"""
-        )
+        template = airspeed.Template("""$x.func("multi
+line")""")
         assert template.merge({"x": Thing()}) == "y"
 
     def test_provides_helpful_error_location(self, test_render):
@@ -1266,15 +1252,11 @@ line")"""
         assert ns["foo"] == 2
 
     def test_doesnt_blow_stack(self, test_render):
-        template = airspeed.Template(
-            textwrap.dedent(
-                """
+        template = airspeed.Template(textwrap.dedent("""
                 #foreach($i in [1..$end])
                     $assembly##
                 #end
-                """
-            )
-        )
+                """))
         ns = {"end": 400}
         template.merge(ns)
 
@@ -1284,17 +1266,13 @@ line")"""
         )
         assert test_render == "$bypass"
 
-        test_render_map = test_render_locally(
-            textwrap.dedent(
-                f"""
+        test_render_map = test_render_locally(textwrap.dedent(f"""
                 #set( $map = {{}})
                 #set($ignore = $map.put('bypass', "{airspeed.operators.REPLACE_FORMAL_TEXT}"))
                 #set($ignore = $map.put('no-bypass', "value"))
                 $map.bypass
                 $map.no-bypass
-                """
-            )
-        )
+                """))
 
         assert test_render_map == "\n$map.bypass\nvalue\n"
 
@@ -1361,13 +1339,11 @@ class TestMacros:
         )
 
     def test_macro_whitespace_and_newlines_ignored(self, test_render_locally):
-        template = textwrap.dedent(
-            """
+        template = textwrap.dedent("""
             #macro ( blah )
             hello##
             #end
-            #blah()"""
-        )
+            #blah()""")
         test_render_locally(template)
 
     def test_recursive_macro(self, test_render_locally):
@@ -1382,14 +1358,12 @@ class TestMacros:
 
     def test_evaluate_directive(self, test_render_locally):
         # "#evaluate" not supported in AWS either, just like "#macro"
-        template = textwrap.dedent(
-            """
+        template = textwrap.dedent("""
             #set($source1 = "abc")
             #set($select = "1")
             #set($dynamicsource = "$source$select")
             ## $dynamicsource is now the string '$source1'
-            #evaluate($dynamicsource)"""
-        )
+            #evaluate($dynamicsource)""")
         test_render_locally(template)
 
     def test_return_macro(self, test_render_locally):
